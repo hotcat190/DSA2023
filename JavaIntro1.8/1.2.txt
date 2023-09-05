@@ -1,0 +1,19 @@
+-public
+error: 'main' method is not declared 'public static'
+
+-static 
+error: 'main' method is not declared 'public static'
+
+-void
+HelloWorld.java:2: error: invalid method declaration; return type required
+    public static  main(String[] args) {
+                   ^
+1 error
+error: compilation failed
+
+-args
+HelloWorld.java:2: error: <identifier> expected
+    public static void main(String[] ) {
+                                    ^
+1 error
+error: compilation failed
