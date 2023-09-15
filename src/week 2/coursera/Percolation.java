@@ -9,6 +9,7 @@ public class Percolation {
     private final int n;
     private final WeightedQuickUnionUF uf;
     private int countOpenSites;
+    private boolean doesPercolates;
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
@@ -17,11 +18,11 @@ public class Percolation {
         }
         this.n = n;
 
-        states = new byte[n*n+2];
-        for (int i = 0; i < n*n+2; i++) {
+        states = new byte[n*n];
+        for (int i = 0; i < n*n; i++) {
             states[i] = CLOSE;
         }
-        uf = new WeightedQuickUnionUF(n*n+2);
+        uf = new WeightedQuickUnionUF(n*n);
     }
 
     // validate arguments
@@ -31,54 +32,67 @@ public class Percolation {
         }
     }
 
+    // return one-dimensional index from two-dimensional index
+    private int flatIndex(int row, int col) {
+        return n * (row - 1) + col - 1;
+    }
+
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
         validateRowCol(row, col);
         if (isOpen(row, col)) {
             return;
         }
-        int index = n * (row-1) + col;
-        states[index] = OPEN;
-        
-        int root = connect(row, col);
+        int index = flatIndex(row, col);
+        states[index] |= OPEN;
+
+        if (row == 1) {
+            states[index] |= TOP;
+        }
+        if (row == n) {
+            states[index] |= BOT;
+        }
         
         countOpenSites++;
-        connectToAdjacentOpenSites(row, col);
+        connect(row, col);
     }
 
-    private int connect(int row, int col) {
-    }
-
-    // connect current site to adjacent open sites
-    private void connectToAdjacentOpenSites(int row, int col) {
-        validateRowCol(row, col);
+    // connect current site to grid
+    private void connect(int row, int col) {
         if (!isOpen(row, col)) {
             return;
         }
-        int index = n * (row-1) + col;
+        int index = flatIndex(row, col);
         int[] adjacentIndex = getAdjacentIndex(row, col);
         for (int i : adjacentIndex) {
-            if (states[i] > 0) {
-                uf.union(index, i);
+            if (states[i] != CLOSE) {
+                connectToAdjacentOpenSite(index, i);
             }
         }
-        if (row == 1) {
-            states[index] = states[index] | TOP;
+
+        if ((states[index] & TOP) != 0 && (states[index] & BOT) != 0) {
+            doesPercolates = true;
         }
-        else if (row == n) {
-            uf.union(index, n*n+1);
-        }
+    }
+
+    // connect current site to an open adjacent site
+    private void connectToAdjacentOpenSite(int newSite, int adjacentSite) {
+        int root = uf.find(adjacentSite);
+        states[newSite] |= states[root];
+        uf.union(newSite, root);
+
+        int newRoot = uf.find(newSite);
+        states[newRoot] |= states[newSite];
     }
 
     // find valid adjacent sites of a site
     private int[] getAdjacentIndex(int row, int col) {
-        validateRowCol(row, col);
-        int index = n * (row-1) + col;
-        if (index == 1) {
+        int index = flatIndex(row, col);
+        if (row == 1 && col == 1) {
             // top left
             return new int[]{index+1, index+n};
         }
-        else if (index == n) {
+        else if (row == 1 && col == n) {
             // top right
             return new int[]{index-1, index+n};
         }
@@ -114,15 +128,15 @@ public class Percolation {
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
         validateRowCol(row, col);
-        int index = n * (row-1) + col;
-        return (states[index] > 0);
+        int index = flatIndex(row, col);
+        return (states[index] != CLOSE);
     }
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
         validateRowCol(row, col);
-        int index = n * (row-1) + col;
-        return uf.find(index) == uf.find(0);
+        int index = flatIndex(row, col);
+        return (states[uf.find(index)] & TOP) != 0;
     }
 
     // returns the number of open sites
@@ -132,11 +146,12 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return uf.find(0) == uf.find(n*n+1);
+        return doesPercolates;
     }
 
     // test client (optional)
     public static void main(String[] args) {
-
+        Percolation percolation = new Percolation(5);
+        percolation.open(5, 5);
     }
 }
