@@ -1,3 +1,0 @@
-error: can't find main(String[]) method in class: Hello
-
-explanation: main method is missing arguments (String[] args)

@@ -1,0 +1,5 @@
+-public -static -void
+compilation failed
+
+-args
+run as normal
