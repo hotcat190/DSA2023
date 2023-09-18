@@ -87,6 +87,9 @@ public class Percolation {
 
     // find valid adjacent sites of a site
     private int[] getAdjacentIndex(int row, int col) {
+        if (n == 1) {
+            return new int[]{};
+        }
         int index = flatIndex(row, col);
         if (row == 1 && col == 1) {
             // top left
