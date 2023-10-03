@@ -4,27 +4,21 @@ import java.util.stream.*;
 import static java.util.stream.Collectors.toList;
 
 public class EqualStacks {
-    public static int equalStacks(List<Integer> h1, List<Integer> h2, List<Integer> h3) {
+    public static int equalStacks(Stack<Integer> h1, Stack<Integer> h2, Stack<Integer> h3) {
         // Write your code here
         int sum1 = h1.stream().mapToInt(Integer::intValue).sum();
         int sum2 = h2.stream().mapToInt(Integer::intValue).sum();
         int sum3 = h3.stream().mapToInt(Integer::intValue).sum();
-        int index1 = 0;
-        int index2 = 0;
-        int index3 = 0;
         while (sum1 != sum2 || sum2 != sum3) {
             int currentLowest = Math.min(Math.min(sum1, sum2), sum3);
             if (sum1 > currentLowest) {
-                sum1 -= h1.get(index1);
-                index1++;
+                sum1 -= h1.pop();
             }
             if (sum2 > currentLowest) {
-                sum2 -= h2.get(index2);
-                index2++;
+                sum2 -= h2.pop();
             }
             if (sum3 > currentLowest) {
-                sum3 -= h3.get(index3);
-                index3++;
+                sum3 -= h3.pop();
             }
             if (currentLowest == 0) {
                 return 0;
@@ -45,19 +39,31 @@ public class EqualStacks {
 
         int n3 = Integer.parseInt(firstMultipleInput[2]);
 
-        List<Integer> h1 = Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
-                .map(Integer::parseInt)
-                .collect(toList());
+        Integer[] h1 = Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
+                .map(Integer::parseInt).toArray(Integer[]::new);
 
-        List<Integer> h2 = Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
-                .map(Integer::parseInt)
-                .collect(toList());
+        Integer[] h2 = Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
+                .map(Integer::parseInt).toArray(Integer[]::new);
 
-        List<Integer> h3 = Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
-                .map(Integer::parseInt)
-                .collect(toList());
+        Integer[] h3 = Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
+                .map(Integer::parseInt).toArray(Integer[]::new);
 
-        int result = EqualStacks.equalStacks(h1, h2, h3);
+        Stack<Integer> s1 = new Stack<>();
+        for (int i = h1.length - 1; i >= 0; i--){
+            s1.push(h1[i]);
+        }
+
+        Stack<Integer> s2 = new Stack<>();
+        for (int i = h2.length - 1; i >= 0; i--){
+            s2.push(h2[i]);
+        }
+
+        Stack<Integer> s3 = new Stack<>();
+        for (int i = h3.length - 1; i >= 0; i--){
+            s3.push(h3[i]);
+        }
+
+        int result = EqualStacks.equalStacks(s1, s2, s3);
         System.out.println(result);
 
 //        bufferedWriter.write(String.valueOf(result));
