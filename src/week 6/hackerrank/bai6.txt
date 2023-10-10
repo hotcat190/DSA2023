@@ -1,0 +1,4 @@
+sai ở dòng 10:
+while(j > 0 && A[j] > value)
+sửa thành:
+while(j >= 0 && A[j] > value)

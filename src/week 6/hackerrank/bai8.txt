@@ -1,0 +1,1 @@
+Có thể lưu dữ liệu đầu vào trong danh sách liên kết, tuy nhiên không nên làm vậy do cache miss.
