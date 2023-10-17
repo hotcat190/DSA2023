@@ -8,7 +8,9 @@ public class QuickSort {
         System.out.println(arr);
     }
 
-    /** Return the median of the array (the element which divides the array into two equal halves). */
+    /** Return the median of the array (the element which divides the array into two equal halves).
+     *  Uses the quick sort algorithm.
+     */
     public static int findMedian(List<Integer> arr) {
         quickSort(arr);
         return arr.get(arr.size()/2);
