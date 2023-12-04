@@ -11,39 +11,37 @@ import static java.util.stream.Collectors.toList;
 public class DijkstraShortestReach {
     public static List<Integer> shortestReach(int n, List<List<Integer>> edges, int s) {
         // Write your code here
-        List<List<DirectedCost>> adjList = new ArrayList<>(n);
+        List<List<Cost>> adjList = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
             adjList.add(new LinkedList<>());
         }
         for (List<Integer> edge : edges) {
-            adjList.get(edge.get(0) - 1).add(new DirectedCost(edge.get(2), edge.get(0), edge.get(1)));
-            adjList.get(edge.get(1) - 1).add(new DirectedCost(edge.get(2), edge.get(1), edge.get(0)));
+            adjList.get(edge.get(0) - 1).add(new Cost(edge.get(2), edge.get(0), edge.get(1)));
+            adjList.get(edge.get(1) - 1).add(new Cost(edge.get(2), edge.get(1), edge.get(0)));
         }
         int[] distTo = new int[n];
-        Arrays.fill(distTo, Integer.MAX_VALUE);
+        for (int i = 0; i < n; i++) {
+            distTo[i] = Integer.MAX_VALUE;
+        }
         distTo[s-1] = 0;
-        boolean[] marked = new boolean[n];
-        marked[s-1] = true;
-        PriorityQueue<DirectedCost> pq = new PriorityQueue<>(adjList.get(s-1));
+        PriorityQueue<Cost> pq = new PriorityQueue<>(adjList.get(s-1));
         while (!pq.isEmpty()) {
-            DirectedCost directedCost = pq.poll();
-            if (marked[directedCost.getTo()-1]) {
+            Cost cost = pq.poll();
+            if (distTo[cost.getTo()-1] <= distTo[cost.getFrom()-1] + cost.getCost()) {
                 continue;
             }
-            System.out.println(directedCost.getTo());
-            if (distTo[directedCost.getTo()-1] <= distTo[directedCost.getFrom()-1] + directedCost.getCost()) {
-                continue;
-            }
-            distTo[directedCost.getTo()-1] = distTo[directedCost.getFrom()-1] + directedCost.getCost();
-            marked[directedCost.getTo()-1] = true;
-            pq.addAll(adjList.get(directedCost.getTo()-1));
+            distTo[cost.getTo()-1] = distTo[cost.getFrom()-1] + cost.getCost();
+            pq.addAll(adjList.get(cost.getTo()-1));
         }
         List<Integer> res = new ArrayList<>(n-1);
         for (int i = 0; i < n; i++) {
-            if (distTo[i] == Integer.MAX_VALUE) {
+            if (i == s-1) {
+                continue;
+            }
+            else if (distTo[i] == Integer.MAX_VALUE) {
                 res.add(-1);
             }
-            else if (i != s-1) {
+            else {
                 res.add(distTo[i]);
             }
         }
