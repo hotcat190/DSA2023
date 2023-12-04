@@ -11,22 +11,22 @@ import static java.util.stream.Collectors.toList;
 public class DijkstraShortestReach {
     public static List<Integer> shortestReach(int n, List<List<Integer>> edges, int s) {
         // Write your code here
-        List<List<Cost>> adjList = new ArrayList<>(n);
+        List<List<DirectedCost>> adjList = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
             adjList.add(new LinkedList<>());
         }
         for (List<Integer> edge : edges) {
-            adjList.get(edge.get(0) - 1).add(new Cost(edge.get(2), edge.get(0), edge.get(1)));
-            adjList.get(edge.get(1) - 1).add(new Cost(edge.get(2), edge.get(1), edge.get(0)));
+            adjList.get(edge.get(0) - 1).add(new DirectedCost(edge.get(2), edge.get(0), edge.get(1)));
+            adjList.get(edge.get(1) - 1).add(new DirectedCost(edge.get(2), edge.get(1), edge.get(0)));
         }
         int[] distTo = new int[n];
         for (int i = 0; i < n; i++) {
             distTo[i] = Integer.MAX_VALUE;
         }
         distTo[s-1] = 0;
-        PriorityQueue<Cost> pq = new PriorityQueue<>(adjList.get(s-1));
+        PriorityQueue<DirectedCost> pq = new PriorityQueue<>(adjList.get(s-1));
         while (!pq.isEmpty()) {
-            Cost cost = pq.poll();
+            DirectedCost cost = pq.poll();
             if (distTo[cost.getTo()-1] <= distTo[cost.getFrom()-1] + cost.getCost()) {
                 continue;
             }
